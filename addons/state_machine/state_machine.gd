@@ -20,7 +20,7 @@ extends Node
 var current_state = null setget set_current_state, get_current_state # reference to current state
 var _stack = [] setget set_stack, get_stack
 var _states = {} setget set_states # dictionary of state names to state nodes
-var _history = [] # list of the previous states used
+var _history = [] setget set_history# list of the previous states used
 export(int) var history_length = 10 # length of the history that is saved
 
 # signals
@@ -28,6 +28,8 @@ signal state_changed(new_state_name)
 signal state_added(new_state_name)
 
 func _ready():
+	# initialise the stack with an empty element
+	_stack.push_front(null)
 	# find any existing states as children and add them as possible states
 	for child in get_children():
 		add_state(child)
@@ -89,3 +91,6 @@ func set_stack(value):
 
 func get_stack():
 	print("ERROR: Can't modify state stack")
+
+func set_history(value):
+	print("ERROR: Can't modify state history")

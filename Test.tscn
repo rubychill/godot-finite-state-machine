@@ -8,7 +8,7 @@
 
 script/script = ExtResource( 1 )
 
-[node name="State Machine" type="Node" parent="."]
+[node name="StateMachine" type="Node" parent="."]
 
 script/script = ExtResource( 2 )
 __meta__ = {

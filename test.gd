@@ -1,6 +1,7 @@
 extends Node
 
-var Test = preload("test_node.gd")
+const Test = preload("test_node.gd")
+onready var fsm = get_node("StateMachine")
 
 var test_1
 var test_2
@@ -9,10 +10,13 @@ func _ready():
 	set_process(true)
 	test_1 = Test.new()
 	test_1.message = "1"
+	test_1.set_name("test1")
 	test_2 = Test.new()
 	test_2.message = "2"
+	test_2.set_name("test2")
 	
-	add_child(test_1)
+	fsm.add_state(test_1)
+	fsm.add_state(test_2)
 	
 	var timer = Timer.new()
 	add_child(timer)
@@ -22,9 +26,7 @@ func _ready():
 
 func timeout():
 	print("change")
-	if (test_1.get_parent() == null):
-		remove_child(test_2)
-		add_child(test_1)
+	if (fsm.current_state.get_name() == "test1"):
+		fsm.set_state("test2")
 	else:
-		remove_child(test_1)
-		add_child(test_2)
+		fsm.set_state("test1")
