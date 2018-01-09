@@ -21,7 +21,7 @@ func _ready():
 	timer.start()
 
 func timeout():
-	print("reset")
+	print("change")
 	if (test_1.get_parent() == null):
 		remove_child(test_2)
 		add_child(test_1)

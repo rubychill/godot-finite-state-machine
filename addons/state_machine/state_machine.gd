@@ -6,11 +6,15 @@
 # State nodes process the same way as other nodes, but are removed from the scenetree when they are not active.
 # pop_state() and push_state(name) are used to manipulate the stack based implementation of the state machine
 # set_state(name) can be used to change the current state (pop_state() followed by push_state(name), without triggering new states between them)
+#
+# Some notes:
+#	The parent of a state is guaranteed to be the state machine
+#	States can remove themselves as the current state by referencing the state machine, but be aware that the node is immediately removed from the SceneTree (akin to free())
+#	States can have child nodes, and they will act as intended when the state is not active
+#	_ready() is called on a state every time it is activated, use _init() for anything that can *only* be called once
+#	Maybe also learn about when _init() and _ready() are called in general, it's good to know anyway
 #####
 extends Node
-
-# consts
-const State = preload("state.gd")
 
 # member vars
 var current_state = null setget set_current_state, get_current_state # reference to current state
@@ -26,20 +30,15 @@ signal state_added(new_state_name)
 func _ready():
 	# find any existing states as children and add them as possible states
 	for child in get_children():
-		if (child extends State):
-			add_state(child)
+		add_state(child)
 
 func add_state(state):
 	# error checking
-	if (!state extends State):
-		print("ERROR: New state is not of State type")
-		return
-	if (states.has(state.get_name())):
+	if (_states.has(state.get_name())):
 		print("ERROR: new state has name that already exists in state machine")
 		return
 	# add the state to the dictionary and as child, emit signal
 	_states[state.get_name()] = state
-	state.state_machine = self
 	emit_signal("state_added", state.get_name())
 	# remove the state from its parent
 	if (state.get_parent() != null):
@@ -50,7 +49,7 @@ func add_state(state):
 
 func set_state(value):
 	value = str(value)
-	if (!states.has(value)):
+	if (!_states.has(value)):
 		print("ERROR: State machine does not contain state: %s" % value)
 		return
 	# end the current state if it exists
