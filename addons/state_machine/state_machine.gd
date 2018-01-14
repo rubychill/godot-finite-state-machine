@@ -24,24 +24,26 @@ var _history = [] setget set_history# list of the previous states used
 export(int) var history_length = 10 # length of the history that is saved
 
 # signals
-signal state_changed(new_state_name)
-signal state_added(new_state_name)
+signal state_changed(state)
+signal state_added(state)
 
 func _ready():
 	# initialise the stack with an empty element
 	_stack.push_front(null)
-	# find any existing states as children and add them as possible states
+
+func add_children_as_states():
 	for child in get_children():
 		add_state(child)
 
 func add_state(state):
+	emit_signal("state_added", state)
+	print("Adding state %s" % state.get_name())
 	# error checking
 	if (_states.has(state.get_name())):
 		print("ERROR: new state has name that already exists in state machine")
 		return
 	# add the state to the dictionary and as child, emit signal
 	_states[state.get_name()] = state
-	emit_signal("state_added", state.get_name())
 	# remove the state from its parent
 	if (state.get_parent() != null):
 		state.get_parent().remove_child(state)
@@ -50,6 +52,7 @@ func add_state(state):
 		set_state(state.get_name())
 
 func set_state(value):
+	print("Setting state to %s" % value)
 	value = str(value)
 	if (!_states.has(value)):
 		print("ERROR: State machine does not contain state: %s" % value)
@@ -65,7 +68,10 @@ func set_state(value):
 	current_state = _states[value]
 	_stack[0] = _states[value]
 	add_child(current_state)
-	emit_signal("state_changed", value)
+	emit_signal("state_changed", current_state)
+
+func has_state(state_name):
+	return _states.has(state_name)
 
 # pop front of stack, and set state to the new head
 func pop_state():

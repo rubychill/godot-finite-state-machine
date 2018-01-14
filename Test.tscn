@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=1]
+[gd_scene load_steps=5 format=1]
 
 [ext_resource path="res://test.gd" type="Script" id=1]
 [ext_resource path="res://addons/state_machine/state_machine.gd" type="Script" id=2]
 [ext_resource path="res://addons/state_machine/fsm_icon.png" type="Texture" id=3]
+[ext_resource path="res://test_node.gd" type="Script" id=4]
 
 [node name="Test" type="Node"]
 
@@ -15,5 +16,13 @@ __meta__ = {
 "_editor_icon": ExtResource( 3 )
 }
 history_length = 10
+
+[node name="State1" type="Node" parent="StateMachine"]
+
+script/script = ExtResource( 4 )
+
+[node name="State2" type="Node" parent="StateMachine"]
+
+script/script = ExtResource( 4 )
 
 
